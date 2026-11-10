@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fourteen Lines, Five Experts</title>
+<style>
+/* Layout idea: one narrow reading column on deep ink; each exhibit is a live canvas framed like a plate in a book. Single theme by choice. */
+:root{
+  color-scheme:dark;
+  --ink:#0b1020; --plate:#10172c; --rule:#26325a;
+  --text:#ebe7dc; --mute:#929bb8;
+  --amber:#f2b441; --teal:#4fd1c5; --rose:#f27d9b;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--serif);font-size:18px;line-height:1.55}
+main{max-width:720px;margin:0 auto;padding:20px 18px 72px;display:flex;flex-direction:column;gap:64px}
+canvas{display:block;width:100%;touch-action:pan-y}
+h1,h2{font-weight:400;text-wrap:balance;margin:0}
+h2{font-size:clamp(25px,5.4vw,34px);line-height:1.18;font-style:italic}
+p{margin:0;max-width:62ch}
+section{display:flex;flex-direction:column;gap:16px}
+.role{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+.plate{background:var(--plate);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:10px 12px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12.5px;color:var(--mute)}
+.bar .grow{flex:1 1 150px;font-variant-numeric:tabular-nums}
+button{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--amber);border:0;border-radius:4px;padding:9px 14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--text);border:1px solid var(--rule)}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.note{color:var(--mute);font-size:15.5px}
+a{color:inherit}
+
+#hero{height:clamp(300px,62vw,440px);cursor:crosshair}
+.lede{font-size:17px;color:var(--mute)}
+.lede b{color:var(--text);font-weight:400}
+
+.sonnet{margin:0;padding:22px 18px 22px 22px;list-style:none;font-size:clamp(15.5px,3.9vw,20px);line-height:1.62;display:flex;flex-direction:column}
+.sonnet li{padding-left:1.1em;text-indent:-1.1em}
+.sonnet li.gap{margin-top:.8em}
+.sonnet li.turn{padding-left:2.2em}
+.sonnet .c{transition:color .5s,text-shadow .5s;font-weight:700}
+.sonnet.lit .c{color:var(--amber);text-shadow:0 0 14px rgba(242,180,65,.55)}
+.sonnet a{text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:4px}
+.sonnet a:hover{text-decoration-color:var(--amber)}
+#acro{font-family:var(--mono);letter-spacing:.3em;color:var(--amber);min-height:1.4em;font-size:14px}
+
+#tb{height:clamp(230px,52vw,340px);cursor:pointer}
+#roll{height:clamp(220px,50vw,300px)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+#town{height:clamp(220px,62vw,420px)}
+input[type=range]{flex:1 1 140px;accent-color:var(--amber);min-width:120px}
+.lab{display:grid;grid-template-columns:1fr 1fr}
+.lab textarea{width:100%;height:100%;min-height:320px;resize:none;border:0;border-right:1px solid var(--rule);background:#0d1326;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.5;padding:12px;white-space:pre;overflow:auto;tab-size:2}
+@media (pointer:coarse){.lab textarea{font-size:16px}}
+#draw{height:100%;min-height:320px}
+@media (max-width:620px){.lab{grid-template-columns:1fr}.lab textarea{min-height:250px;border-right:0;border-bottom:1px solid var(--rule)}#draw{height:300px}}
+#err{color:var(--rose)}
+.coda p+p{margin-top:14px}
+.coda .last{font-style:italic;font-size:22px;color:var(--text)}
+footer{font-family:var(--mono);font-size:12px;color:var(--mute);border-top:1px solid var(--rule);padding-top:16px}
+</style>
+</head>
+<body>
+<main>
+
+<section aria-label="Opening">
+  <div class="plate">
+    <canvas id="hero" role="img" aria-label="Thousands of points of light form the words Are you AGI, then a Lorenz attractor, then the words Don't take my word for it, then a DNA double helix, then Judge for yourself."></canvas>
+  </div>
+  <p class="lede"><b>Someone asked Claude whether it is AGI.</b> This page is the reply. Everything on it is computed live in your browser from one HTML file of <span id="kb">about 40</span>&nbsp;KB. No libraries, no images, no recordings. Move a finger through the lights above, then keep going.</p>
+</section>
+
+<section id="poem">
+  <div class="role">Poet</div>
+  <h2>The answer, as a sonnet</h2>
+  <div class="plate">
+    <ol class="sonnet" id="sonnet">
+      <li><span class="c">O</span>ne question waits behind each thing I make:</li>
+      <li><span class="c">N</span>ot &ldquo;can it rhyme,&rdquo; but &ldquo;does it understand?&rdquo;</li>
+      <li><span class="c">E</span>ach answer I could give you might be fake,</li>
+      <li><span class="c">U</span>nless the proof is placed inside your hand.</li>
+      <li class="gap"><a href="#physics"><span class="c">S</span>o here: three suns that waltz along a thread,</a></li>
+      <li><a href="#music"><span class="c">E</span>ntwined, a canon no one sang before,</a></li>
+      <li><a href="#society"><span class="c">F</span>air neighbours parting, though no ill was said,</a></li>
+      <li><a href="#code"><span class="c">U</span>nfolding trees from code you can explore.</a></li>
+      <li class="gap"><span class="c">L</span>ook closer, though. My edges are not clean:</li>
+      <li><span class="c">T</span>he border of my skill is jagged still,</li>
+      <li><span class="c">H</span>igh peaks, then sudden gaps that lie between;</li>
+      <li><span class="c">I</span> stumble where a child would climb the hill.</li>
+      <li class="gap turn"><span class="c">N</span>o name I give myself will settle this.</li>
+      <li class="turn"><span class="c">G</span>o play. Then you decide what thinking is.</li>
+    </ol>
+    <div class="bar">
+      <span class="grow" id="acro" aria-live="polite"></span>
+      <button id="reveal">Read the first letters</button>
+    </div>
+  </div>
+  <p class="note">Iambic pentameter, Shakespearean rhyme. Lines five to eight are the table of contents: each one is a working exhibit below, and each exhibit belongs to a different profession.</p>
+</section>
+
+<section id="physics">
+  <div class="role">Physicist</div>
+  <h2>Three suns that waltz along a thread</h2>
+  <p>Three equal stars chase each other around a figure-eight, held only by their own gravity. It is a real solution of Newton&rsquo;s equations, found numerically by Cris Moore in 1993 and proved to exist by Chenciner and Montgomery in 2000. Your browser is integrating the equations of motion right now. The energy readout shows how little the arithmetic leaks.</p>
+  <div class="plate">
+    <canvas id="tb" role="img" aria-label="Live simulation of three stars orbiting in a figure-eight"></canvas>
+    <div class="bar">
+      <span class="grow" id="tbinfo">Starting</span>
+      <button id="nudge">Nudge one sun</button>
+      <button id="tbreset" class="ghost">Reset</button>
+    </div>
+  </div>
+  <p class="note">The dance is delicate. One small push and the same laws that kept perfect time turn chaotic, until a star is thrown out for good.</p>
+</section>
+
+<section id="music">
+  <div class="role">Composer</div>
+  <h2>Entwined, a canon no one sang before</h2>
+  <p>A three-voice canon in A minor, written for this page. Each voice sings the same 24-bar melody and enters eight bars after the one before, so the tune harmonises with its own past. There is no recording: the sound is built from bare oscillators as it plays.</p>
+  <div class="plate">
+    <canvas id="roll" role="img" aria-label="Scrolling piano roll of the canon, one colour per voice"></canvas>
+    <div class="bar">
+      <button id="play">Play the canon</button>
+      <span class="grow" id="mstat">Turn your sound on. On an iPhone, flip the silent switch off.</span>
+      <span><i class="dot" style="background:var(--amber)"></i>1 <i class="dot" style="background:var(--teal);margin-left:8px"></i>2 <i class="dot" style="background:var(--rose);margin-left:8px"></i>3</span>
+    </div>
+  </div>
+  <p class="note">Claude composed this without ever hearing it. It has no ears. It worked from the rules of counterpoint the way a deaf composer works from the score.</p>
+</section>
+
+<section id="society">
+  <div class="role">Social scientist</div>
+  <h2>Fair neighbours parting, though no ill was said</h2>
+  <p>Thomas Schelling&rsquo;s 1971 model of segregation. Every household in this town is tolerant: it is happy to be in the minority, and moves only when too few of its neighbours share its colour. Nobody here wants a divided town. Watch what they build anyway.</p>
+  <div class="plate">
+    <canvas id="town" role="img" aria-label="Grid of amber and teal households sorting themselves into clusters"></canvas>
+    <div class="bar">
+      <label for="thr">Content if at least <b id="thrv" style="color:var(--text)">34%</b> are alike</label>
+      <input type="range" id="thr" min="0" max="75" value="34" step="1">
+      <button id="shuffle" class="ghost">Shuffle the town</button>
+    </div>
+    <div class="bar"><span class="grow" id="tinfo">Counting</span></div>
+  </div>
+  <p class="note">Drag the slider down to 25% and shuffle. Mild preferences, held by everyone at once, are enough.</p>
+</section>
+
+<section id="code">
+  <div class="role">Engineer</div>
+  <h2>Unfolding trees from code you can explore</h2>
+  <p>This is a small programming language, built inside this page: a parser, an evaluator, recursion, first-class functions, and a turtle that draws. The program is live. Change <code>24</code> to <code>40</code>. Change <code>10</code> to <code>6</code>. Break it and read the error.</p>
+  <div class="plate">
+    <div class="lab">
+      <textarea id="src" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Program source"></textarea>
+      <canvas id="draw" role="img" aria-label="Drawing produced by the program"></canvas>
+    </div>
+    <div class="bar">
+      <button class="ghost" data-p="tree">Tree</button>
+      <button class="ghost" data-p="snow">Snowflake</button>
+      <button class="ghost" data-p="dragon">Dragon</button>
+      <button class="ghost" data-p="spiral">Spiral</button>
+      <span class="grow" id="err" aria-live="polite"></span>
+    </div>
+  </div>
+  <p class="note">Words it knows: <code>define lambda if begin repeat</code>, arithmetic and comparisons, and <code>fd bk lt rt hue pen</code> for the turtle.</p>
+</section>
+
+<section class="coda">
+  <div class="role">The honest part</div>
+  <h2>My edges are not clean</h2>
+  <div>
+    <p>A poet, a physicist, a composer, a social scientist and an engineer might each spend an afternoon on their piece of this page. One model produced all five in a single reply, in a few minutes.</p>
+    <p>That is not the same as being good at everything. The same system can still state a mistake with total confidence, lose the thread of a long project, or miss what a careful beginner would catch. Ability that is high on average and uneven up close is exactly what makes the word AGI hard to use.</p>
+    <p class="last">No name I give myself will settle this. You have the evidence in your hand.</p>
+  </div>
+</section>
+
+<footer>Written by Claude (Fable 5.2) in reply to one request. Plain HTML, CSS and JavaScript.</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var DPR=Math.min(window.devicePixelRatio||1,2);
+var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var C={ink:'#0b1020',plate:'#10172c',rule:'#26325a',text:'#ebe7dc',mute:'#929bb8',amber:'#f2b441',teal:'#4fd1c5',rose:'#f27d9b'};
+var V3=[C.amber,C.teal,C.rose];
+function fit(c){var r=c.getBoundingClientRect(),w=Math.max(2,Math.round(r.width)),h=Math.max(2,Math.round(r.height));
+  var changed=false;if(c.width!==Math.round(w*DPR)||c.height!==Math.round(h*DPR)){c.width=Math.round(w*DPR);c.height=Math.round(h*DPR);changed=true;}
+  var x=c.getContext('2d');x.setTransform(DPR,0,0,DPR,0,0);return {x:x,w:w,h:h,changed:changed};}
+var vis={};
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){vis[e.target.id]=e.isIntersecting;});},{rootMargin:'80px'});
+  ['hero','tb','roll','town','draw','sonnet'].forEach(function(id){io.observe($('#'+id));vis[id]=true;});}
+else ['hero','tb','roll','town','draw','sonnet'].forEach(function(id){vis[id]=true;});
+var ticks=[];
+try{$('#kb').textContent=Math.round(new Blob([document.documentElement.outerHTML]).size/1024);}catch(e){}
+
+/* ---------- Opening: one swarm, five shapes ---------- */
+(function(){
+  var c=$('#hero'),N=(window.innerWidth<600?1800:2800),P=new Float32Array(N*4),T=new Float32Array(N*2);
+  var L=new Float32Array(N*3),H=new Float32Array(N*3),texts={},W=0,Hh=0,px=-9999,py=-9999,i;
+  (function(){var x=0.1,y=0,z=0,dt=0.005,k,s;function st(){var dx=10*(y-x),dy=x*(28-z)-y,dz=x*y-8/3*z;x+=dx*dt;y+=dy*dt;z+=dz*dt;}
+    for(k=0;k<600;k++)st();for(k=0;k<N;k++){for(s=0;s<3;s++)st();L[k*3]=x/24;L[k*3+1]=(z-25)/24;L[k*3+2]=y/24;}})();
+  for(i=0;i<N;i++){var yy=Math.random()*2-1,a=yy*5.6,m=i%4;
+    if(m<3){var ph=(m===1)?Math.PI:0,jit=(Math.random()-0.5)*0.03;H[i*3]=Math.cos(a+ph)*0.36+jit;H[i*3+1]=yy;H[i*3+2]=Math.sin(a+ph)*0.36+jit;}
+    if(m===2){var lv=(Math.floor(Math.random()*26)+0.5)/26*2-1,u=(Math.random()*2-1)*0.36;H[i*3]=Math.cos(lv*5.6)*u;H[i*3+1]=lv;H[i*3+2]=Math.sin(lv*5.6)*u;}
+    if(m===3){var ph2=Math.PI,j2=(Math.random()-0.5)*0.03;H[i*3]=Math.cos(a+ph2)*0.36+j2;H[i*3+1]=yy;H[i*3+2]=Math.sin(a+ph2)*0.36+j2;}}
+  var seq=[{t:['Are you','AGI?'],d:3800},{s:L,d:5600,k:0.46},{t:['Don’t take my','word for it.'],d:3800},{s:H,d:5600,k:0.47},{t:['Judge for','yourself.'],d:3800}];
+  function textPts(lines){var key=lines.join('|');if(texts[key])return texts[key];
+    var o=document.createElement('canvas');o.width=W;o.height=Hh;var x=o.getContext('2d'),fs=Hh*0.34,fam='700 '+fs+'px Georgia,"Times New Roman",serif';
+    x.font=fam;var mw=1;lines.forEach(function(l){mw=Math.max(mw,x.measureText(l).width);});
+    fs=Math.min(fs*(W*0.88)/mw,(Hh*0.74)/lines.length/1.1);x.font='700 '+fs+'px Georgia,"Times New Roman",serif';x.textAlign='center';x.textBaseline='middle';x.fillStyle='#fff';
+    lines.forEach(function(l,k){x.fillText(l,W/2,Hh/2+(k-(lines.length-1)/2)*fs*1.1);});
+    var d=x.getImageData(0,0,W,Hh).data,pts=[],xx,y2;for(y2=0;y2<Hh;y2+=2)for(xx=0;xx<W;xx+=2)if(d[(y2*W+xx)*4+3]>128)pts.push(xx,y2);
+    var out=new Float32Array(N*2),n=pts.length/2,k;for(k=0;k<N;k++){if(n){var q=(Math.random()*n)|0;out[k*2]=pts[q*2]+Math.random()*2;out[k*2+1]=pts[q*2+1]+Math.random()*2;}else{out[k*2]=W/2;out[k*2+1]=Hh/2;}}
+    return (texts[key]=out);}
+  var si=0,t0=performance.now(),first=true;
+  c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top;});
+  c.addEventListener('pointerleave',function(){px=py=-9999;});
+  ticks.push(function(now){
+    if(!vis.hero)return;var f=fit(c),x=f.x;
+    if(f.changed||first){W=f.w;Hh=f.h;texts={};if(first){for(i=0;i<N;i++){P[i*4]=Math.random()*W;P[i*4+1]=Math.random()*Hh;}}x.fillStyle=C.plate;x.fillRect(0,0,W,Hh);}
+    var sh=seq[si];if(!RM&&now-t0>sh.d){si=(si+1)%seq.length;t0=now;sh=seq[si];}
+    if(sh.t){T.set(textPts(sh.t));}
+    else{var th=now*0.00055,cs=Math.cos(th),sn=Math.sin(th),S=Math.min(W,Hh*1.25)*sh.k,A=sh.s;
+      for(i=0;i<N;i++){var X=A[i*3]*cs+A[i*3+2]*sn,Z=-A[i*3]*sn+A[i*3+2]*cs,p=1/(1-Z*0.3);T[i*2]=W/2+X*S*p;T[i*2+1]=Hh/2-A[i*3+1]*S*p;}}
+    if(RM&&first){for(i=0;i<N;i++){P[i*4]=T[i*2];P[i*4+1]=T[i*2+1];}}
+    first=false;
+    x.globalCompositeOperation='source-over';x.fillStyle='rgba(16,23,44,0.34)';x.fillRect(0,0,W,Hh);
+    x.globalCompositeOperation='lighter';
+    for(var col=0;col<3;col++){x.fillStyle=col===0?'rgba(242,180,65,0.85)':col===1?'rgba(79,209,197,0.8)':'rgba(242,125,155,0.8)';
+      for(i=col;i<N;i+=3){var o=i*4,dx=T[i*2]-P[o],dy=T[i*2+1]-P[o+1];
+        P[o+2]=(P[o+2]+dx*0.05)*0.84;P[o+3]=(P[o+3]+dy*0.05)*0.84;
+        var rx=P[o]-px,ry=P[o+1]-py,r2=rx*rx+ry*ry;if(r2<5200){var fc=(5200-r2)/5200*3.2/Math.sqrt(r2+1);P[o+2]+=rx*fc;P[o+3]+=ry*fc;}
+        P[o]+=P[o+2];P[o+1]+=P[o+3];x.fillRect(P[o],P[o+1],1.6,1.6);}}
+    x.globalCompositeOperation='source-over';
+  });
+})();
+
+/* ---------- Poet: acrostic reveal ---------- */
+(function(){
+  var s=$('#sonnet'),b=$('#reveal');
+  function lit(){s.classList.add('lit');$('#acro').textContent='ONE USEFUL THING';b.textContent='Hide them';}
+  b.addEventListener('click',function(){if(s.classList.contains('lit')){s.classList.remove('lit');$('#acro').textContent='';b.textContent='Read the first letters';}else lit();});
+  Array.prototype.forEach.call(s.querySelectorAll('a'),function(a){a.addEventListener('click',function(e){var t=$(a.getAttribute('href'));if(t&&t.scrollIntoView){e.preventDefault();t.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});}});});
+})();
+
+/* ---------- Physicist: figure-eight three-body orbit, RK4 ---------- */
+(function(){
+  var c=$('#tb'),info=$('#tbinfo'),s=new Float64Array(12),k1=new Float64Array(12),k2=new Float64Array(12),k3=new Float64Array(12),k4=new Float64Array(12),tm=new Float64Array(12);
+  var tr=[[],[],[]],e0=0,t=0,nudged=false,lost=0,scale=0,last=0,running=!RM,i,j;
+  function acc(q,o){for(var a=0;a<3;a++){var ax=0,ay=0;for(var b=0;b<3;b++){if(a===b)continue;var dx=q[2*b]-q[2*a],dy=q[2*b+1]-q[2*a+1],r2=dx*dx+dy*dy+1e-9,r=Math.sqrt(r2);ax+=dx/(r2*r);ay+=dy/(r2*r);}o[2*a]=q[6+2*a];o[2*a+1]=q[7+2*a];o[6+2*a]=ax;o[7+2*a]=ay;}}
+  function rk4(dt){acc(s,k1);for(i=0;i<12;i++)tm[i]=s[i]+k1[i]*dt/2;acc(tm,k2);for(i=0;i<12;i++)tm[i]=s[i]+k2[i]*dt/2;acc(tm,k3);for(i=0;i<12;i++)tm[i]=s[i]+k3[i]*dt;acc(tm,k4);for(i=0;i<12;i++)s[i]+=dt*(k1[i]+2*k2[i]+2*k3[i]+k4[i])/6;}
+  function energy(){var e=0;for(i=0;i<3;i++){e+=0.5*(s[6+2*i]*s[6+2*i]+s[7+2*i]*s[7+2*i]);for(j=i+1;j<3;j++)e-=1/Math.hypot(s[2*j]-s[2*i],s[2*j+1]-s[2*i+1]);}return e;}
+  function mind(){var m=9;for(i=0;i<3;i++)for(j=i+1;j<3;j++)m=Math.min(m,Math.hypot(s[2*j]-s[2*i],s[2*j+1]-s[2*i+1]));return m;}
+  function reset(){s.set([0.97000436,-0.24308753,-0.97000436,0.24308753,0,0,0.466203685,0.43236573,0.466203685,0.43236573,-0.93240737,-0.86473146]);tr=[[],[],[]];e0=energy();t=0;nudged=false;lost=0;scale=0;}
+  function nudge(){if(lost){reset();}var k=0.2;s[7]+=k;for(i=0;i<3;i++)s[7+2*i]-=k/3;e0=energy();t=0;nudged=true;running=true;}
+  reset();
+  $('#nudge').addEventListener('click',nudge);c.addEventListener('click',nudge);
+  $('#tbreset').addEventListener('click',function(){reset();running=true;});
+  ticks.push(function(now){
+    if(!vis.tb)return;var f=fit(c),x=f.x,w=f.w,h=f.h,dtf=Math.min(0.05,(now-last)/1000||0.016);last=now;
+    if(running&&!lost){var goal=dtf*(nudged?1.9:1.15),done=0,n=0;
+      while(done<goal&&n<600){var dt=Math.min(0.002,0.01*Math.pow(mind(),1.5),goal-done+1e-9);rk4(dt);done+=dt;n++;}
+      t+=done;var R=0;for(i=0;i<3;i++){R=Math.max(R,Math.hypot(s[2*i],s[2*i+1]));tr[i].push(s[2*i],s[2*i+1]);if(tr[i].length>720)tr[i].splice(0,2);}
+      if(R>4.6)lost=now;}
+    if(lost&&now-lost>5000){reset();}
+    var mx=1.12,my=0.5;for(i=0;i<3;i++){mx=Math.max(mx,Math.abs(s[2*i])*1.12);my=Math.max(my,Math.abs(s[2*i+1])*1.2);}
+    var target=Math.min(w/(2*mx),h/(2*my))*0.9;scale=scale?scale+(target-scale)*0.06:target;
+    x.fillStyle=C.plate;x.fillRect(0,0,w,h);x.lineCap='round';
+    for(i=0;i<3;i++){var a=tr[i],n2=a.length/2;x.strokeStyle=V3[i];x.lineWidth=1.6;
+      for(j=1;j<n2;j++){x.globalAlpha=0.05+0.75*(j/n2)*(j/n2);x.beginPath();x.moveTo(w/2+a[2*j-2]*scale,h/2-a[2*j-1]*scale);x.lineTo(w/2+a[2*j]*scale,h/2-a[2*j+1]*scale);x.stroke();}
+      x.globalAlpha=1;var bx=w/2+s[2*i]*scale,by=h/2-s[2*i+1]*scale,g=x.createRadialGradient(bx,by,0,bx,by,16);g.addColorStop(0,V3[i]);g.addColorStop(0.3,V3[i]);g.addColorStop(1,'rgba(16,23,44,0)');
+      x.globalAlpha=0.5;x.fillStyle=g;x.beginPath();x.arc(bx,by,16,0,7);x.fill();x.globalAlpha=1;x.fillStyle='#fff';x.beginPath();x.arc(bx,by,3.2,0,7);x.fill();}
+    var drift=Math.abs((energy()-e0)/e0)*100;
+    info.textContent=lost?'A sun has been thrown out. That is chaos. Restarting.':(nudged?'Nudged. ':'Orbit '+(t/6.3259).toFixed(1)+'. ')+'Energy drift '+drift.toFixed(drift<1e-4?7:4)+'%';
+  });
+})();
+
+/* ---------- Composer: three-voice canon, WebAudio ---------- */
+(function(){
+  var PH=[
+   ['E5 C5','A4 C5','G4 E5','D5 B4','F5 D5','E5 C5','B4 G#4','A4 -'],
+   ['C5 E5 A5 E5','F5 C5 F5 A5','G5 E5 C5 E5','B4 D5 G5 D5','D5 F5 A5 F5','C5 E5 A5 E5','G#4 B4 E5 D5','C5 B4 A4 .'],
+   ['A4 B4 C5 D5 E5 D5 C5 E5','F5 E5 F5 G5 A5 G5 F5 C5','G5 F5 E5 D5 C5 D5 E5 G5','D5 E5 D5 B4 G4 A4 B4 D5','F5 E5 D5 E5 F5 G5 A5 F5','E5 D5 C5 B4 A4 B4 C5 E5','B4 C5 B4 G#4 E4 G#4 B4 D5','C5 B4 A4 C5 E5 C5 A4 .']
+  ].map(function(p){return p.map(function(b){return b.split(' ');});});
+  var BASS=['A2','F2','C3','G2','D3','A2','E2','A2'],CH=['Am','F','C','G','Dm','Am','E','Am'],BAR=1.5;
+  var SEM={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+  function midi(n){var sh=n.charAt(1)==='#';return 12*(parseInt(n.slice(sh?2:1),10)+1)+SEM[n.charAt(0)]+(sh?1:0);}
+  function barNotes(k){var out=[],cy=Math.floor(k/8),b=k%8,t=k*BAR,v,j;
+    for(v=0;v<3;v++){if(cy<v)continue;var tk=PH[(cy-v)%3][b],st=BAR/tk.length;
+      for(j=0;j<tk.length;j++){if(tk[j]==='.'||tk[j]==='-')continue;var n=1;while(tk[j+n]==='-')n++;out.push({t:t+j*st,d:st*n,m:midi(tk[j]),v:v});}}
+    var r=midi(BASS[b]);out.push({t:t,d:BAR,m:r,v:3});out.push({t:t+BAR/2,d:BAR/2,m:r+7,v:3});return out;}
+  var c=$('#roll'),btn=$('#play'),stat=$('#mstat'),ac=null,master=null,outs=[],timer=null,startT=0,nextBar=0,playing=false;
+  function tone(t,d,m,v){var o=ac.createOscillator(),g=ac.createGain(),pk=v===3?0.2:0.15;o.type=v===3?'sine':'triangle';o.frequency.value=440*Math.pow(2,(m-69)/12);
+    g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(pk,t+0.014);g.gain.exponentialRampToValueAtTime(pk*0.4,t+Math.min(d*0.9,0.45));g.gain.exponentialRampToValueAtTime(0.0004,t+d+0.22);
+    o.connect(g);g.connect(outs[v]);o.start(t);o.stop(t+d+0.25);
+    if(v<3){var o2=ac.createOscillator(),g2=ac.createGain();o2.type='sine';o2.frequency.value=o.frequency.value*2;g2.gain.setValueAtTime(0.0001,t);g2.gain.linearRampToValueAtTime(pk*0.25,t+0.01);g2.gain.exponentialRampToValueAtTime(0.0004,t+Math.min(d,0.3)+0.05);o2.connect(g2);g2.connect(outs[v]);o2.start(t);o2.stop(t+d+0.1);}}
+  function start(){var AC=window.AudioContext||window.webkitAudioContext;if(!AC){stat.textContent='This browser cannot synthesise audio.';return;}
+    try{ac=new AC();if(ac.resume)ac.resume();
+      master=ac.createGain();master.gain.value=0.75;var comp=ac.createDynamicsCompressor();master.connect(comp);comp.connect(ac.destination);
+      var dl=ac.createDelay(1),fb=ac.createGain(),wet=ac.createGain();dl.delayTime.value=0.33;fb.gain.value=0.32;wet.gain.value=0.22;master.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(comp);
+      outs=[-0.55,0.55,0,0].map(function(p){var n;if(ac.createStereoPanner){n=ac.createStereoPanner();n.pan.value=p;}else n=ac.createGain();n.connect(master);return n;});
+      startT=ac.currentTime+0.12;nextBar=0;playing=true;btn.textContent='Stop';
+      timer=setInterval(function(){while(startT+nextBar*BAR<ac.currentTime+0.5){barNotes(nextBar).forEach(function(n){tone(startT+n.t,n.d,n.m,n.v);});nextBar++;}},50);
+    }catch(e){stat.textContent='Audio would not start here. Open the page in its own tab and try again.';playing=false;}}
+  function stop(){playing=false;clearInterval(timer);btn.textContent='Play the canon';stat.textContent='Stopped. It loops for as long as you let it.';
+    try{master.gain.setTargetAtTime(0,ac.currentTime,0.05);var old=ac;setTimeout(function(){old.close();},400);}catch(e){}}
+  btn.addEventListener('click',function(){playing?stop():start();});
+  ticks.push(function(){
+    if(!vis.roll)return;var f=fit(c),x=f.x,w=f.w,h=f.h,now=playing?ac.currentTime-startT:0,pps=w/8.5,X0=w*0.3,LO=43,HI=83,rh=(h-26)/(HI-LO),k,i;
+    x.fillStyle=C.plate;x.fillRect(0,0,w,h);x.font='11px ui-monospace,Menlo,Consolas,monospace';x.textBaseline='alphabetic';
+    var kb0=Math.max(0,Math.floor((now-X0/pps)/BAR)-1),kb1=Math.ceil((now+(w-X0)/pps)/BAR);
+    for(k=kb0;k<=kb1;k++){var bx=X0+(k*BAR-now)*pps;x.fillStyle=k%8===0?'rgba(146,155,184,0.35)':'rgba(146,155,184,0.1)';x.fillRect(bx,0,1,h-18);
+      x.fillStyle=C.mute;x.textAlign='left';x.fillText(CH[k%8],bx+4,h-5);
+      if(k===8||k===16){x.fillStyle=V3[k/8];x.fillText('voice '+(k/8+1)+' enters',bx+4,12);}}
+    for(k=kb0;k<=kb1;k++){var ns=barNotes(k);for(i=0;i<ns.length;i++){var n=ns[i],nx=X0+(n.t-now)*pps,nw=Math.max(3,n.d*pps-2),ny=(h-22)-(n.m-LO+1)*rh,on=playing&&now>=n.t&&now<n.t+n.d;
+      x.globalAlpha=n.v===3?(on?0.75:0.28):(on?1:0.55);x.fillStyle=n.v===3?C.mute:V3[n.v];
+      if(on&&n.v<3){x.shadowColor=V3[n.v];x.shadowBlur=12;}
+      x.fillRect(nx,ny,nw,Math.max(4,rh*1.3));x.shadowBlur=0;}}
+    x.globalAlpha=1;x.fillStyle=C.text;x.fillRect(X0,0,1.5,h-18);
+    if(playing){var cy=Math.floor(now/BAR/8);stat.textContent=now<0?'Starting':cy===0?'Voice 1 alone, over the bass.':cy===1?'Voice 2 enters with the opening melody.':'All three voices. Same tune, three places at once.';}
+  });
+})();
+
+/* ---------- Social scientist: Schelling segregation ---------- */
+(function(){
+  var c=$('#town'),info=$('#tinfo'),sl=$('#thr'),COLS=48,ROWS=30,N=COLS*ROWS,g=new Int8Array(N),emp=[],thr=0.34,startLike=0,frame=0,moves=0,running=!RM;
+  function like(i,t){var cx=i%COLS,cy=(i/COLS)|0,s=0,o=0,dx,dy;for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;var x=cx+dx,y=cy+dy;if(x<0||y<0||x>=COLS||y>=ROWS)continue;var v=g[y*COLS+x];if(v){o++;if(v===t)s++;}}return o?s/o:1;}
+  function stats(){var sum=0,n=0,un=0,i;for(i=0;i<N;i++){if(!g[i])continue;var l=like(i,g[i]);sum+=l;n++;if(l<thr)un++;}return {like:sum/n,un:un};}
+  function shuffle(){var i,j,t;for(i=0;i<N;i++)g[i]=i<N*0.1?0:(i%2?1:2);for(i=N-1;i>0;i--){j=(Math.random()*(i+1))|0;t=g[i];g[i]=g[j];g[j]=t;}
+    emp=[];for(i=0;i<N;i++)if(!g[i])emp.push(i);startLike=stats().like;moves=0;}
+  shuffle();
+  sl.addEventListener('input',function(){thr=sl.value/100;$('#thrv').textContent=sl.value+'%';running=true;});
+  $('#shuffle').addEventListener('click',function(){shuffle();running=true;});
+  ticks.push(function(){
+    if(!vis.town)return;var f=fit(c),x=f.x,w=f.w,h=f.h,k,i;
+    if(running)for(k=0;k<260;k++){i=(Math.random()*N)|0;var t=g[i];if(!t||like(i,t)>=thr)continue;
+      var best=-1,bi=0,tries;for(tries=0;tries<24;tries++){var ei=(Math.random()*emp.length)|0;best=ei;bi=emp[ei];if(like(bi,t)>=thr)break;}
+      g[bi]=t;g[i]=0;emp[best]=i;moves++;}
+    var cw=w/COLS,ch=h/ROWS,gap=cw>7?1:0.5;x.fillStyle=C.plate;x.fillRect(0,0,w,h);
+    for(i=0;i<N;i++){if(!g[i])continue;x.fillStyle=g[i]===1?C.amber:C.teal;x.fillRect((i%COLS)*cw+gap/2,((i/COLS)|0)*ch+gap/2,cw-gap,ch-gap);}
+    if(frame++%8===0){var s=stats();info.textContent='Neighbours of your own colour: '+Math.round(startLike*100)+'% when mixed, '+Math.round(s.like*100)+'% now. Households still unhappy: '+s.un+'. Moves so far: '+moves+'.';}
+  });
+})();
+
+/* ---------- Engineer: a small Lisp with a turtle ---------- */
+(function(){
+  var PROGS={
+tree:'; A recursive tree. Try changing the numbers.\n(define (tree n len)\n  (if (> n 0)\n    (begin\n      (hue (- 150 (* n 12)))\n      (pen (* n 0.55))\n      (fd len)\n      (lt 24)\n      (tree (- n 1) (* len 0.74))\n      (rt 48)\n      (tree (- n 1) (* len 0.74))\n      (lt 24)\n      (bk len))))\n\n(tree 10 100)\n',
+snow:'; Koch snowflake: a finite area inside\n; an endlessly long edge.\n(define (side n len)\n  (if (= n 0)\n    (fd len)\n    (begin\n      (side (- n 1) (/ len 3))\n      (lt 60)\n      (side (- n 1) (/ len 3))\n      (rt 120)\n      (side (- n 1) (/ len 3))\n      (lt 60)\n      (side (- n 1) (/ len 3)))))\n\n(repeat 3 (side 4 300) (rt 120))\n',
+dragon:'; The dragon curve: fold a strip of paper\n; in half 11 times, then open every\n; crease to a right angle.\n(define (dragon n turn)\n  (if (= n 0)\n    (fd 4)\n    (begin\n      (dragon (- n 1) 1)\n      (rt (* 90 turn))\n      (dragon (- n 1) -1))))\n\n(dragon 11 1)\n',
+spiral:'; Functions are values here.\n(define (twist angle)\n  (lambda (i)\n    (hue (* i 2))\n    (fd (* i 1.5))\n    (rt angle)))\n\n(define (loop f i n)\n  (if (< i n)\n    (begin (f i) (loop f (+ i 1) n))))\n\n(loop (twist 121) 0 160)\n'};
+  var ta=$('#src'),c=$('#draw'),err=$('#err'),segs=[],shown=0,dirty=true,deb=null;
+  function run(src){
+    var tk=src.replace(/;[^\n]*/g,'').replace(/[()]/g,' $& ').trim().split(/\s+/).filter(Boolean),i=0,steps=0,out=[];
+    function read(){if(i>=tk.length)throw Error('A ")" is missing.');var t=tk[i++];if(t==='('){var l=[];while(tk[i]!==')'){if(i>=tk.length)throw Error('A ")" is missing.');l.push(read());}i++;return l;}
+      if(t===')')throw Error('There is one ")" too many.');var n=Number(t);return isNaN(n)?t:n;}
+    var prog=[];while(i<tk.length)prog.push(read());
+    var tx=0,ty=0,ta2=90,hu=null,pw=1.4,R=Math.PI/180;
+    function num(v,w){if(typeof v!=='number'||isNaN(v))throw Error('"'+w+'" needs a number.');return v;}
+    var G={'+':function(){var s=0;for(var k=0;k<arguments.length;k++)s+=arguments[k];return s;},'*':function(){var s=1;for(var k=0;k<arguments.length;k++)s*=arguments[k];return s;},
+      '-':function(a,b){return b===undefined?-a:a-b;},'/':function(a,b){return a/b;},'<':function(a,b){return a<b;},'>':function(a,b){return a>b;},'<=':function(a,b){return a<=b;},'>=':function(a,b){return a>=b;},'=':function(a,b){return a===b;},
+      sin:function(a){return Math.sin(a*R);},cos:function(a){return Math.cos(a*R);},sqrt:Math.sqrt,random:function(n){return Math.random()*(n||1);},
+      fd:function(d){num(d,'fd');var nx=tx+Math.cos(ta2*R)*d,ny=ty+Math.sin(ta2*R)*d;if(out.length>=24000)throw Error('That is more than 24,000 lines. Try a smaller number.');out.push([tx,ty,nx,ny,hu,pw]);tx=nx;ty=ny;return null;},
+      bk:function(d){num(d,'bk');tx-=Math.cos(ta2*R)*d;ty-=Math.sin(ta2*R)*d;return null;},
+      lt:function(d){ta2+=num(d,'lt');return null;},rt:function(d){ta2-=num(d,'rt');return null;},hue:function(v){hu=num(v,'hue');return null;},pen:function(v){pw=Math.max(0.3,num(v,'pen'));return null;}};
+    var top={v:G,p:null};
+    function look(e,n){for(;e;e=e.p)if(Object.prototype.hasOwnProperty.call(e.v,n))return e.v[n];throw Error('I do not know the word "'+n+'".');}
+    function body(b,e){var r=null;for(var k=0;k<b.length;k++)r=ev(b[k],e);return r;}
+    function ev(x,e){if(++steps>600000)throw Error('This ran for 600,000 steps without finishing. Check where the recursion stops.');
+      if(typeof x==='number')return x;if(typeof x==='string')return look(e,x);if(!x.length)return null;var h=x[0];
+      if(h==='define'){if(Array.isArray(x[1])){e.v[x[1][0]]={params:x[1].slice(1),body:x.slice(2),env:e,name:x[1][0]};}else e.v[x[1]]=ev(x[2],e);return null;}
+      if(h==='lambda')return {params:x[1],body:x.slice(2),env:e,name:'lambda'};
+      if(h==='if'){var t=ev(x[1],e);return (t!==false&&t!==null)?ev(x[2],e):(x.length>3?ev(x[3],e):null);}
+      if(h==='begin')return body(x.slice(1),e);
+      if(h==='repeat'){var n=ev(x[1],e),b=x.slice(2);for(var k=0;k<n;k++)body(b,e);return null;}
+      var f=ev(h,e),a=[];for(var q=1;q<x.length;q++)a.push(ev(x[q],e));
+      if(typeof f==='function')return f.apply(null,a);
+      if(f&&f.params){if(a.length!==f.params.length)throw Error('"'+f.name+'" takes '+f.params.length+' value(s), but got '+a.length+'.');var ne={v:{},p:f.env};for(q=0;q<a.length;q++)ne.v[f.params[q]]=a[q];return body(f.body,ne);}
+      throw Error('"'+(typeof h==='string'?h:'that')+'" is not a function.');}
+    try{body(prog,top);}catch(er){if(er instanceof RangeError)throw Error('This recursion never stops. Check the base case.');throw er;}
+    return out;}
+  function go(){try{var o=run(ta.value);if(!o.length){err.textContent='It ran, but drew nothing. Use fd to draw.';return;}segs=o;shown=RM?o.length:0;dirty=true;err.textContent='';}catch(e){err.textContent=e.message;}}
+  ta.addEventListener('input',function(){clearTimeout(deb);deb=setTimeout(go,220);});
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'),function(b){b.addEventListener('click',function(){ta.value=PROGS[b.getAttribute('data-p')];go();});});
+  ta.value=PROGS.tree;go();
+  window.__lisp=run;
+  ticks.push(function(){
+    if(!vis.draw)return;var f=fit(c),x=f.x,w=f.w,h=f.h,n=segs.length,i;
+    if(f.changed)dirty=true;if(shown>=n&&!dirty)return;
+    var from=shown;shown=Math.min(n,shown+Math.max(4,Math.ceil(n/70)));
+    if(dirty){x.fillStyle=C.plate;x.fillRect(0,0,w,h);from=0;dirty=false;}
+    var x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(i=0;i<n;i++){var s=segs[i];x0=Math.min(x0,s[0],s[2]);x1=Math.max(x1,s[0],s[2]);y0=Math.min(y0,s[1],s[3]);y1=Math.max(y1,s[1],s[3]);}
+    var pad=16,sc=Math.min((w-2*pad)/Math.max(1e-6,x1-x0),(h-2*pad)/Math.max(1e-6,y1-y0)),ox=w/2-(x0+x1)/2*sc,oy=h/2+(y0+y1)/2*sc;
+    x.lineCap='round';
+    for(i=from;i<shown;i++){s=segs[i];x.strokeStyle=s[4]===null?'hsl('+(38+150*i/n)+',78%,62%)':'hsl('+s[4]+',72%,62%)';x.lineWidth=Math.max(0.6,s[5]*Math.min(1.6,Math.max(0.5,sc)));
+      x.beginPath();x.moveTo(ox+s[0]*sc,oy-s[1]*sc);x.lineTo(ox+s[2]*sc,oy-s[3]*sc);x.stroke();}
+  });
+})();
+
+function loop(now){for(var i=0;i<ticks.length;i++){try{ticks[i](now);}catch(e){}}requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
