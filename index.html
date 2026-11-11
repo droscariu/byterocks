@@ -60,6 +60,9 @@ input[type=range]{flex:1 1 140px;accent-color:var(--amber);min-width:120px}
 #err{color:var(--rose)}
 .coda p+p{margin-top:14px}
 .coda .last{font-style:italic;font-size:22px;color:var(--text)}
+#consent{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:center;padding:12px 16px;background:var(--plate);border-top:1px solid var(--rule);font-family:var(--mono);font-size:13px;color:var(--text)}
+#consent[hidden]{display:none}
+#consent span{flex:1 1 260px;max-width:60ch}
 footer{font-family:var(--mono);font-size:12px;color:var(--mute);border-top:1px solid var(--rule);padding-top:16px}
 </style>
 </head>
@@ -70,7 +73,7 @@ footer{font-family:var(--mono);font-size:12px;color:var(--mute);border-top:1px s
   <div class="plate">
     <canvas id="hero" role="img" aria-label="Thousands of points of light form the words Are you AGI, then a Lorenz attractor, then the words Don't take my word for it, then a DNA double helix, then Judge for yourself."></canvas>
   </div>
-  <p class="lede"><b>Someone asked Claude whether it is AGI.</b> This page is the reply. Everything on it is computed live in your browser from one HTML file of <span id="kb">about 40</span>&nbsp;KB. No libraries, no images, no recordings. Move a finger through the lights above, then keep going.</p>
+  <p class="lede"><b>Someone asked Claude whether it is AGI.</b> This page is the reply. Everything on it is computed live in your browser from one HTML file of <span id="kb">about 40</span>&nbsp;KB. The page uses no code libraries, no images and no recordings. The only thing it ever loads from outside is a visitor counter, and only if you agree to it. Move a finger through the lights above, then keep going.</p>
 </section>
 
 <section id="poem">
@@ -177,8 +180,14 @@ footer{font-family:var(--mono);font-size:12px;color:var(--mute);border-top:1px s
   </div>
 </section>
 
-<footer>Written by Claude (Fable 5.2) in reply to one request. Plain HTML, CSS and JavaScript.</footer>
+<footer>Written by Claude (Fable 5.2) in reply to one request. Plain HTML, CSS and JavaScript. An optional visitor counter was added afterwards. <button id="c-change" class="ghost" style="margin-left:6px;padding:4px 8px;font-size:12px">Change my counting choice</button></footer>
 </main>
+
+<div id="consent" hidden role="region" aria-label="Visitor counting">
+  <span>May this page count your visit with Google Analytics? It uses cookies. Nothing is loaded from Google unless you say yes.</span>
+  <button id="c-yes">Count my visit</button>
+  <button id="c-no" class="ghost">No thanks</button>
+</div>
 
 <script>
 (function(){
@@ -400,6 +409,20 @@ spiral:'; Functions are values here.\n(define (twist angle)\n  (lambda (i)\n    
     for(i=from;i<shown;i++){s=segs[i];x.strokeStyle=s[4]===null?'hsl('+(38+150*i/n)+',78%,62%)':'hsl('+s[4]+',72%,62%)';x.lineWidth=Math.max(0.6,s[5]*Math.min(1.6,Math.max(0.5,sc)));
       x.beginPath();x.moveTo(ox+s[0]*sc,oy-s[1]*sc);x.lineTo(ox+s[2]*sc,oy-s[3]*sc);x.stroke();}
   });
+})();
+
+/* ---------- Optional visitor counter: Google Analytics loads only after consent ---------- */
+(function(){
+  var GA='G-RKBG2ECGS5',bar=$('#consent'),KEY='br_consent',choice=null;
+  try{choice=localStorage.getItem(KEY);}catch(e){}
+  function save(v){choice=v;try{localStorage.setItem(KEY,v);}catch(e){}}
+  function loadGA(){if(window.__ga)return;window.__ga=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};
+    window.gtag('js',new Date());window.gtag('config',GA);
+    var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+GA;document.head.appendChild(s);}
+  if(choice==='yes')loadGA();else if(choice!=='no')bar.hidden=false;
+  $('#c-yes').addEventListener('click',function(){save('yes');bar.hidden=true;loadGA();});
+  $('#c-no').addEventListener('click',function(){save('no');bar.hidden=true;});
+  $('#c-change').addEventListener('click',function(){bar.hidden=false;});
 })();
 
 function loop(now){for(var i=0;i<ticks.length;i++){try{ticks[i](now);}catch(e){}}requestAnimationFrame(loop);}
